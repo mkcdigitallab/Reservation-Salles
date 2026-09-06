@@ -1,0 +1,27 @@
+{
+    "name": "malang-kiya-cisse/reservation-salles",
+    "description": "Application de réservation de salles",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Malang Kiya Cisse",
+            "email": "papac8443@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
