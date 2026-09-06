@@ -1,0 +1,796 @@
+/* =========================================
+   ROOMBOOK — DESIGN SYSTEM
+   ========================================= */
+
+:root {
+    --primary: #ff7900;
+    --primary-dark: #e56700;
+    --primary-light: #fff1e6;
+
+    --dark: #111827;
+    --dark-soft: #1f2937;
+
+    --text: #374151;
+    --text-light: #6b7280;
+
+    --white: #ffffff;
+    --background: #f8fafc;
+    --border: #e5e7eb;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.12);
+
+    --transition: 0.25s ease;
+}
+
+/* =========================================
+   RESET
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+/* =========================================
+   CONTAINER
+   ========================================= */
+
+.container {
+    width: min(1120px, 92%);
+    margin: 0 auto;
+}
+
+/* =========================================
+   HEADER / NAVBAR
+   ========================================= */
+
+.site-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar {
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* Logo */
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark);
+}
+
+.logo > span:last-child span {
+    color: var(--primary);
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--primary);
+    color: var(--white);
+
+    border-radius: 11px;
+
+    font-weight: 800;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Navigation */
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-link {
+    padding: 9px 14px;
+
+    border-radius: var(--radius-sm);
+
+    color: var(--text-light);
+    font-weight: 600;
+
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-link.active {
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    padding: 11px 18px;
+
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        transform var(--transition),
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+
+    box-shadow: 0 6px 18px rgba(255, 121, 0, 0.25);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 10px 25px rgba(255, 121, 0, 0.30);
+}
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.main-content {
+    min-height: calc(100vh - 140px);
+    padding: 50px 0;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.site-footer {
+    background: var(--dark);
+    color: #9ca3af;
+}
+
+.footer-content {
+    min-height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        min-height: auto;
+        padding: 15px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .navigation {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .navbar > .btn {
+        display: none;
+    }
+
+    .main-content {
+        padding: 30px 0;
+    }
+
+    .footer-content {
+        padding: 18px 0;
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+}
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.4fr 0.6fr;
+    align-items: center;
+    gap: 50px;
+
+    min-height: 390px;
+
+    padding: 60px;
+
+    margin-bottom: 70px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #111827 0%,
+            #1f2937 100%
+        );
+
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+
+    position: relative;
+
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-badge,
+.section-label {
+    display: inline-block;
+
+    color: var(--primary);
+
+    font-size: 0.75rem;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+.hero h1 {
+    margin: 15px 0;
+
+    color: var(--white);
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+}
+
+.hero p {
+    max-width: 600px;
+
+    margin-bottom: 28px;
+
+    color: #d1d5db;
+
+    font-size: 1.05rem;
+}
+
+.hero-decoration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    padding: 25px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: var(--radius-md);
+
+    backdrop-filter: blur(10px);
+
+    color: var(--white);
+}
+
+.hero-card-icon {
+    font-size: 2.5rem;
+}
+
+.hero-card strong {
+    display: block;
+
+    font-size: 2rem;
+}
+
+.hero-card span:last-child {
+    color: #d1d5db;
+}
+
+
+/* =========================================
+   SECTION
+   ========================================= */
+
+.section {
+    margin-bottom: 60px;
+}
+
+.section-heading {
+    margin-bottom: 30px;
+}
+
+.section-heading h2 {
+    margin: 6px 0;
+
+    color: var(--dark);
+
+    font-size: 2rem;
+}
+
+.section-heading p {
+    color: var(--text-light);
+}
+
+
+/* =========================================
+   ROOM GRID
+   ========================================= */
+
+.room-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 24px;
+}
+
+
+/* =========================================
+   ROOM CARD
+   ========================================= */
+
+.room-card {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
+}
+
+.room-card:hover {
+    transform: translateY(-6px);
+
+    border-color: rgba(255, 121, 0, 0.3);
+
+    box-shadow: var(--shadow-md);
+}
+
+.room-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 22px;
+
+    background: var(--primary-light);
+}
+
+.room-icon {
+    width: 52px;
+    height: 52px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--white);
+
+    border-radius: 14px;
+
+    font-size: 1.5rem;
+
+    box-shadow: var(--shadow-sm);
+}
+
+.status-badge {
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: #dcfce7;
+    color: var(--success);
+
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.room-card-body {
+    padding: 24px;
+}
+
+.room-type {
+    color: var(--primary);
+
+    font-size: 0.75rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+}
+
+.room-card h3 {
+    margin: 5px 0;
+
+    color: var(--dark);
+
+    font-size: 1.3rem;
+}
+
+.room-building {
+    margin-bottom: 20px;
+
+    color: var(--text-light);
+
+    font-size: 0.9rem;
+}
+
+.room-info {
+    padding: 14px 0;
+
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+
+    margin-bottom: 18px;
+}
+
+.info-label {
+    display: block;
+
+    color: var(--text-light);
+
+    font-size: 0.75rem;
+
+    margin-bottom: 3px;
+}
+
+.room-info strong {
+    color: var(--dark);
+}
+
+.room-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: var(--primary);
+
+    font-weight: 700;
+
+    transition: var(--transition);
+}
+
+.room-button:hover {
+    color: var(--primary-dark);
+}
+
+.room-button span {
+    font-size: 1.3rem;
+
+    transition: transform var(--transition);
+}
+
+.room-button:hover span {
+    transform: translateX(5px);
+}
+
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
+
+.empty-state {
+    padding: 60px 20px;
+
+    text-align: center;
+
+    background: var(--white);
+
+    border: 1px dashed var(--border);
+
+    border-radius: var(--radius-md);
+}
+
+.empty-icon {
+    font-size: 3rem;
+
+    margin-bottom: 10px;
+}
+
+.empty-state h3 {
+    color: var(--dark);
+}
+
+.empty-state p {
+    color: var(--text-light);
+}
+
+
+/* =========================================
+   RESPONSIVE ROOMS
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .hero {
+        grid-template-columns: 1fr;
+
+        padding: 40px;
+
+        text-align: center;
+    }
+
+    .hero p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .room-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+
+    .hero {
+        padding: 30px 22px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .room-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* =========================================
+   RESERVATION FORM
+   ========================================= */
+
+.form-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 35px;
+}
+
+.form-header h1 {
+    margin: 6px 0;
+
+    color: var(--dark);
+
+    font-size: 2.4rem;
+}
+
+.form-header p {
+    color: var(--text-light);
+}
+
+.reservation-form-card {
+    padding: 35px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-md);
+}
+
+.form-section {
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.form-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-section h2 {
+    margin-bottom: 22px;
+
+    color: var(--dark);
+
+    font-size: 1.2rem;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--dark);
+
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-sm);
+
+    background: var(--white);
+
+    color: var(--dark);
+
+    outline: none;
+
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255, 121, 0, 0.12);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 30px;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: var(--dark);
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+
+/* =========================================
+   FORM RESPONSIVE
+   ========================================= */
+
+@media (max-width: 650px) {
+
+    .reservation-form-card {
+        padding: 24px 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-header h1 {
+        font-size: 2rem;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}

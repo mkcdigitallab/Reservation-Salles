@@ -2,10 +2,19 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Application;
+use App\Repository\SalleRepository;
+use Dotenv\Dotenv;
 
-$application = new Application();
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
 
-$application->run();
+$database = require __DIR__ . '/../config/database.php';
+$database();
+
+$salleRepository = new SalleRepository();
+
+$salles = $salleRepository->findAllActive();
+
+require __DIR__ . '/../templates/salle/index.php';
