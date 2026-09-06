@@ -4,39 +4,22 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Dotenv\Dotenv;
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
-
 use App\Controller\ReservationController;
 use App\Controller\SalleController;
-use App\Repository\ReservationRepository;
-use App\Repository\SalleRepository;
-use App\Service\ReservationService;
-use App\Validation\ReservationValidator;
+use DI\ContainerBuilder;
+use Dotenv\Dotenv;
+use FastRoute\Dispatcher;
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-$database = require __DIR__ . '/../config/database.php';
-$database();
+$containerFactory = require __DIR__ . '/../config/container.php';
+$container = $containerFactory();
 
-$salleRepository = new SalleRepository();
-$reservationRepository = new ReservationRepository();
-$validator = new ReservationValidator();
+$container->get(Capsule::class);
 
-$reservationService = new ReservationService(
-    $validator,
-    $salleRepository,
-    $reservationRepository
-);
-
-$salleController = new SalleController($salleRepository);
-
-$reservationController = new ReservationController(
-    $salleRepository,
-    $reservationService
-);$routes = require __DIR__ . '/../routes/web.php';
-
+$routes = require __DIR__ . '/../routes/web.php';
 $dispatcher = FastRoute\simpleDispatcher($routes);
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -45,7 +28,6 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
 switch ($routeInfo[0]) {
-
     case Dispatcher::NOT_FOUND:
         http_response_code(404);
         echo '404 - Page introuvable';
@@ -62,13 +44,7 @@ switch ($routeInfo[0]) {
 
         [$controller, $method] = $handler;
 
-        $instances = [
-            SalleController::class => $salleController,
-            ReservationController::class => $reservationController,
-        ];
-
-            $instance = $instances[$controller];
-
-            $instance->$method(...array_values($vars));
+        $instance = $container->get($controller);
+        $instance->$method(...array_values($vars));
         break;
 }
