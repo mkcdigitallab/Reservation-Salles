@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\DTO\ReservationDTO;
 use App\Repository\SalleRepository;
 use App\Service\ReservationService;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 
@@ -57,7 +58,7 @@ final class ReservationController
 
             header('Location: /');
             exit;
-        } catch (InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException | DateMalformedStringException $exception) {
             http_response_code(422);
             $message = $exception->getMessage();
             require __DIR__ . '/../../templates/error/422.php';
