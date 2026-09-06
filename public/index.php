@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Controller\ReservationController;
-use App\Controller\SalleController;
-use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -22,8 +19,8 @@ $container->get(Capsule::class);
 $routes = require __DIR__ . '/../routes/web.php';
 $dispatcher = FastRoute\simpleDispatcher($routes);
 
-$httpMethod = $_SERVER['REQUEST_METHOD'];
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$httpMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
@@ -43,7 +40,6 @@ switch ($routeInfo[0]) {
         $vars = $routeInfo[2];
 
         [$controller, $method] = $handler;
-
         $instance = $container->get($controller);
         $instance->$method(...array_values($vars));
         break;
