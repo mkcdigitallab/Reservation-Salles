@@ -17,6 +17,6 @@ final class SalleController
     {
         $salles = $this->salleRepository->findAllActive();
 
-        require __DIR__ . '/../../templates/salle/index.php';
+        require dirname(dirname(__DIR__)) . '/templates/salle/index.php';
     }
 }

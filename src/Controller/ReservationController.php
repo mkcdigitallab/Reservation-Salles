@@ -28,7 +28,7 @@ final class ReservationController
             $salleSelectionnee = $this->salleRepository->findById((int) $_GET['salle']);
         }
 
-        require __DIR__ . '/../../templates/reservation/create.php';
+        require dirname(dirname(__DIR__)) . '/templates/reservation/create.php';
     }
 
     public function store(): void
@@ -61,7 +61,7 @@ final class ReservationController
         } catch (InvalidArgumentException | DateMalformedStringException $exception) {
             http_response_code(422);
             $message = $exception->getMessage();
-            require __DIR__ . '/../../templates/error/422.php';
+        require dirname(dirname(__DIR__)) . '/templates/error/422.php';
         }
     }
 }
