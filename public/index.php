@@ -9,7 +9,7 @@ use FastRoute\Dispatcher;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+$dotenv->safeLoad();
 
 $containerFactory = require __DIR__ . '/../config/container.php';
 $container = $containerFactory();
