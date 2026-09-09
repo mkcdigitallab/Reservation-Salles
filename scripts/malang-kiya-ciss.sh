@@ -17,6 +17,7 @@ if [ -z "$1" ]; then
 fi
 
 docker exec -i "$CONTAINER" mysql \
+    --default-character-set=utf8mb4 \
     -ureservation_user \
     -preservation_password \
     reservation_salles \
