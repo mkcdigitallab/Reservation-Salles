@@ -19,71 +19,51 @@ final class ReservationServiceTest extends TestCase
 {
     public function testRefuseUneSalleInexistante(): void
     {
-    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
-    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
-
+        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+        $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
         $salleRepository->method('findById')->willReturn(null);
+        $reservationRepository->expects($this->never())->method('hasConflict');
         $reservationRepository->expects($this->never())->method('create');
-
-        $service = new ReservationService(
-            new ReservationValidator(),
-            $salleRepository,
-            $reservationRepository,
-        );
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('La salle demandée n’existe pas.');
 
-        $service->createReservation($this->dto());
+        $this->service($salleRepository, $reservationRepository)->createReservation($this->dto());
     }
 
     public function testRefuseUneSalleInactive(): void
     {
-    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
-    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
-
+        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+        $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
         $salleRepository->method('findById')->willReturn($this->salle(false));
+        $reservationRepository->expects($this->never())->method('hasConflict');
         $reservationRepository->expects($this->never())->method('create');
-
-        $service = new ReservationService(
-            new ReservationValidator(),
-            $salleRepository,
-            $reservationRepository,
-        );
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('La salle demandée est inactive.');
 
-        $service->createReservation($this->dto());
+        $this->service($salleRepository, $reservationRepository)->createReservation($this->dto());
     }
 
     public function testRefuseUnChevauchement(): void
     {
-    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
-    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
-
+        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+        $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
         $salleRepository->method('findById')->willReturn($this->salle());
         $reservationRepository->method('hasConflict')->willReturn(true);
         $reservationRepository->expects($this->never())->method('create');
 
-        $service = new ReservationService(
-            new ReservationValidator(),
-            $salleRepository,
-            $reservationRepository,
-        );
-
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('La salle est déjà réservée pour cette période.');
 
-        $service->createReservation($this->dto());
+        $this->service($salleRepository, $reservationRepository)->createReservation($this->dto());
     }
 
-    public function testAutoriseDeuxReservationsAdjacentes(): void
+    public function testUneReservationSansConflitEstCreeeAvecLesDonneesAttenduess(): void
     {
-    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
-    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
+        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+        $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
         $reservation = $this->createStub(Reservation::class);
-
         $salleRepository->method('findById')->willReturn($this->salle());
         $reservationRepository->method('hasConflict')->willReturn(false);
         $reservationRepository->expects($this->once())
@@ -91,49 +71,34 @@ final class ReservationServiceTest extends TestCase
             ->with($this->callback(static function (array $data): bool {
                 return $data['salle_id'] === 1
                     && $data['responsable'] === 'Malang'
-                    && $data['statut'] === 'confirmée';
+                    && $data['email'] === 'malang@example.com'
+                    && $data['motif'] === 'Cours de PHP'
+                    && $data['date_debut'] instanceof DateTimeImmutable
+                    && $data['date_fin'] instanceof DateTimeImmutable
+                    && !array_key_exists('statut', $data);
             }))
             ->willReturn($reservation);
 
-        $service = new ReservationService(
-            new ReservationValidator(),
+        self::assertSame(
+            $reservation,
+            $this->service($salleRepository, $reservationRepository)->createReservation($this->dto())
+        );
+    }
+
+    private function service(
+        SalleRepositoryInterface $salleRepository,
+        ReservationRepositoryInterface $reservationRepository,
+    ): ReservationService {
+        return new ReservationService(
+            new \App\Validation\ReservationValidator(),
             $salleRepository,
             $reservationRepository,
         );
-
-        $dto = $this->dto(
-            new DateTimeImmutable('2035-09-10 11:00:00'),
-            new DateTimeImmutable('2035-09-10 12:00:00'),
-        );
-
-        self::assertSame($reservation, $service->createReservation($dto));
     }
 
-    public function testUneReservationSansConflitEstCreee(): void
+    private function dto(): ReservationDTO
     {
-        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
-        $reservationRepository = $this->createStub(ReservationRepositoryInterface::class);
-        $reservation = $this->createStub(Reservation::class);
-
-        $salleRepository->method('findById')->willReturn($this->salle());
-        $reservationRepository->method('hasConflict')->willReturn(false);
-        $reservationRepository->method('create')->willReturn($reservation);
-
-        $service = new ReservationService(
-            new ReservationValidator(),
-            $salleRepository,
-            $reservationRepository,
-        );
-
-        self::assertSame($reservation, $service->createReservation($this->dto()));
-    }
-
-    private function dto(
-        ?DateTimeImmutable $debut = null,
-        ?DateTimeImmutable $fin = null,
-    ): ReservationDTO {
-        $debut ??= new DateTimeImmutable('2035-09-10 10:00:00');
-        $fin ??= new DateTimeImmutable('2035-09-10 11:00:00');
+        $debut = new DateTimeImmutable('2035-09-10 10:00:00');
 
         return new ReservationDTO(
             salleId: 1,
@@ -141,7 +106,7 @@ final class ReservationServiceTest extends TestCase
             email: 'malang@example.com',
             motif: 'Cours de PHP',
             dateDebut: $debut,
-            dateFin: $fin,
+            dateFin: $debut->modify('+1 hour'),
         );
     }
 
