@@ -60,6 +60,54 @@ final class ReservationValidatorTest extends TestCase
         );
     }
 
+    public function testMotifTropCourtRefuse(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('entre 5 et 255 caractères');
+
+        $debut = new DateTimeImmutable('+1 day 10:00');
+
+        $this->validator->validate(
+            'Malang',
+            'malang@example.com',
+            'PHP',
+            $debut,
+            $debut->modify('+1 hour')
+        );
+    }
+
+    public function testMotifTropLongRefuse(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('entre 5 et 255 caractères');
+
+        $debut = new DateTimeImmutable('+1 day 10:00');
+
+        $this->validator->validate(
+            'Malang',
+            'malang@example.com',
+            str_repeat('A', 256),
+            $debut,
+            $debut->modify('+1 hour')
+        );
+    }
+
+    public function testDureeInferieureATrenteMinutesRefusee(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('au moins 30 minutes');
+
+        $debut = new DateTimeImmutable('+1 day 10:00');
+
+        $this->validator->validate(
+            'Malang',
+            'malang@example.com',
+            'Cours de PHP',
+            $debut,
+            $debut->modify('+29 minutes')
+        );
+    }
+
     public function testDureeSuperieureAQuatreHeuresRefusee(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -69,7 +117,7 @@ final class ReservationValidatorTest extends TestCase
         $this->validator->validate(
             'Malang',
             'malang@example.com',
-            'Cours',
+            'Cours de PHP',
             $debut,
             $debut->modify('+5 hours')
         );
@@ -84,7 +132,7 @@ final class ReservationValidatorTest extends TestCase
         $this->validator->validate(
             'Malang',
             'malang@example.com',
-            'Cours',
+            'Cours de PHP',
             $debut,
             $debut->modify('+2 hours')
         );
@@ -99,7 +147,7 @@ final class ReservationValidatorTest extends TestCase
         $this->validator->validate(
             'Malang',
             'malang@example.com',
-            'Cours',
+            'Cours de PHP',
             $debut,
             $debut
         );
