@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\DTO\ReservationDTO;
 use App\Repository\SalleRepository;
+use App\Security\CsrfToken;
 use App\Service\ReservationService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -15,7 +16,8 @@ final class ReservationController
 {
     public function __construct(
         private SalleRepository $salleRepository,
-        private ReservationService $reservationService
+        private ReservationService $reservationService,
+        private CsrfToken $csrfToken,
     ) {
     }
 
@@ -28,12 +30,25 @@ final class ReservationController
             $salleSelectionnee = $this->salleRepository->findById((int) $_GET['salle']);
         }
 
+        $csrfToken = $this->csrfToken->get();
+
         require dirname(dirname(__DIR__)) . '/templates/reservation/create.php';
     }
 
     public function store(): void
     {
         try {
+            $token = isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+                ? $_POST['csrf_token']
+                : null;
+
+            if (!$this->csrfToken->validate($token)) {
+                http_response_code(419);
+                $message = 'Le formulaire a expiré ou le token de sécurité est invalide.';
+                require dirname(dirname(__DIR__)) . '/templates/error/422.php';
+                return;
+            }
+
             $salleId = filter_input(INPUT_POST, 'salle_id', FILTER_VALIDATE_INT);
             $responsable = trim((string) ($_POST['responsable'] ?? ''));
             $email = trim((string) ($_POST['email'] ?? ''));
@@ -61,7 +76,7 @@ final class ReservationController
         } catch (InvalidArgumentException | DateMalformedStringException $exception) {
             http_response_code(422);
             $message = $exception->getMessage();
-        require dirname(dirname(__DIR__)) . '/templates/error/422.php';
+            require dirname(dirname(__DIR__)) . '/templates/error/422.php';
         }
     }
 }
