@@ -11,6 +11,23 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->safeLoad();
 
+$isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+
+session_set_cookie_params([
+    'httponly' => true,
+    'secure' => $isHttps,
+    'samesite' => 'Lax',
+]);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'self'");
+
 $containerFactory = require __DIR__ . '/../config/container.php';
 $container = $containerFactory();
 
@@ -32,6 +49,7 @@ switch ($routeInfo[0]) {
 
     case Dispatcher::METHOD_NOT_ALLOWED:
         http_response_code(405);
+        header('Allow: ' . implode(', ', $routeInfo[1]));
         echo '405 - Méthode HTTP non autorisée';
         break;
 
