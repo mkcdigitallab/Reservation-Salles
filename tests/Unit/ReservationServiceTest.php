@@ -7,8 +7,8 @@ namespace Tests\Unit;
 use App\DTO\ReservationDTO;
 use App\Model\Reservation;
 use App\Model\Salle;
-use App\Repository\ReservationRepository;
-use App\Repository\SalleRepository;
+use App\Repository\ReservationRepositoryInterface;
+use App\Repository\SalleRepositoryInterface;
 use App\Service\ReservationService;
 use App\Validation\ReservationValidator;
 use DateTimeImmutable;
@@ -19,8 +19,8 @@ final class ReservationServiceTest extends TestCase
 {
     public function testRefuseUneSalleInexistante(): void
     {
-        $salleRepository = $this->createMock(SalleRepository::class);
-        $reservationRepository = $this->createMock(ReservationRepository::class);
+    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
 
         $salleRepository->method('findById')->willReturn(null);
         $reservationRepository->expects($this->never())->method('create');
@@ -39,8 +39,8 @@ final class ReservationServiceTest extends TestCase
 
     public function testRefuseUneSalleInactive(): void
     {
-        $salleRepository = $this->createMock(SalleRepository::class);
-        $reservationRepository = $this->createMock(ReservationRepository::class);
+    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
 
         $salleRepository->method('findById')->willReturn($this->salle(false));
         $reservationRepository->expects($this->never())->method('create');
@@ -59,8 +59,8 @@ final class ReservationServiceTest extends TestCase
 
     public function testRefuseUnChevauchement(): void
     {
-        $salleRepository = $this->createMock(SalleRepository::class);
-        $reservationRepository = $this->createMock(ReservationRepository::class);
+    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
 
         $salleRepository->method('findById')->willReturn($this->salle());
         $reservationRepository->method('hasConflict')->willReturn(true);
@@ -80,9 +80,9 @@ final class ReservationServiceTest extends TestCase
 
     public function testAutoriseDeuxReservationsAdjacentes(): void
     {
-        $salleRepository = $this->createMock(SalleRepository::class);
-        $reservationRepository = $this->createMock(ReservationRepository::class);
-        $reservation = $this->createMock(Reservation::class);
+    $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+    $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
+        $reservation = $this->createStub(Reservation::class);
 
         $salleRepository->method('findById')->willReturn($this->salle());
         $reservationRepository->method('hasConflict')->willReturn(false);
@@ -111,9 +111,9 @@ final class ReservationServiceTest extends TestCase
 
     public function testUneReservationSansConflitEstCreee(): void
     {
-        $salleRepository = $this->createMock(SalleRepository::class);
-        $reservationRepository = $this->createMock(ReservationRepository::class);
-        $reservation = $this->createMock(Reservation::class);
+        $salleRepository = $this->createStub(SalleRepositoryInterface::class);
+        $reservationRepository = $this->createStub(ReservationRepositoryInterface::class);
+        $reservation = $this->createStub(Reservation::class);
 
         $salleRepository->method('findById')->willReturn($this->salle());
         $reservationRepository->method('hasConflict')->willReturn(false);
