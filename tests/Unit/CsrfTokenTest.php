@@ -15,8 +15,7 @@ final class CsrfTokenTest extends TestCase
             session_write_close();
         }
 
-        session_id('csrf_test_' . bin2hex(random_bytes(4)));
-        session_start();
+        session_id('csrf-test-' . bin2hex(random_bytes(4)));        session_start();
         $_SESSION = [];
     }
 

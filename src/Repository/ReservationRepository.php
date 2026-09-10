@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Model\Reservation;
 use DateTimeInterface;
 
-final class ReservationRepository
+final class ReservationRepository implements ReservationRepositoryInterface
 {
     public function create(array $data): Reservation
     {

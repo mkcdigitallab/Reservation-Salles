@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ReservationDTO;
-use App\Repository\ReservationRepository;
-use App\Repository\SalleRepository;
+use App\Repository\ReservationRepositoryInterface;
+use App\Repository\SalleRepositoryInterface;
 use App\Validation\ReservationValidator;
 use App\Model\Reservation;
 use InvalidArgumentException;
 
 final class ReservationService
 {
-    public function __construct(
+   public function __construct(
         private ReservationValidator $validator,
-        private SalleRepository $salleRepository,
-        private ReservationRepository $reservationRepository,
-    ) {
-    }
+        private SalleRepositoryInterface $salleRepository,
+        private ReservationRepositoryInterface $reservationRepository,
+) {
+}
 
     public function createReservation(
         ReservationDTO $dto
