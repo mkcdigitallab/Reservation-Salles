@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Repository\SalleRepository;
+use App\Repository\SalleRepositoryInterface;
+use App\Repository\ReservationRepository;
+use App\Repository\ReservationRepositoryInterface;
 use DI\ContainerBuilder;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Container\ContainerInterface;
@@ -15,6 +19,8 @@ return static function (): ContainerInterface {
 
             return $database();
         },
+        SalleRepositoryInterface::class => \DI\autowire(SalleRepository::class),
+        ReservationRepositoryInterface::class => \DI\autowire(ReservationRepository::class),
     ]);
 
     return $builder->build();
