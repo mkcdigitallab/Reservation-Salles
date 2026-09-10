@@ -20,10 +20,15 @@ require __DIR__ . '/../layout/header.php';
         </p>
     </div>
 
-
     <div class="reservation-form-card">
 
         <form method="POST" action="/reservations">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+            >
 
             <div class="form-section">
 
@@ -32,159 +37,101 @@ require __DIR__ . '/../layout/header.php';
                 <div class="form-grid">
 
                     <div class="form-group">
-
-                        <label for="responsable">
-                            Responsable
-                        </label>
-
+                        <label for="responsable">Responsable</label>
                         <input
                             type="text"
                             id="responsable"
                             name="responsable"
                             placeholder="Votre nom complet"
+                            maxlength="100"
                             required
                         >
-
                     </div>
 
-
                     <div class="form-group">
-
-                        <label for="email">
-                            Adresse email
-                        </label>
-
+                        <label for="email">Adresse email</label>
                         <input
                             type="email"
                             id="email"
                             name="email"
                             placeholder="exemple@email.com"
+                            maxlength="255"
                             required
                         >
-
                     </div>
 
                 </div>
 
             </div>
-
 
             <div class="form-section">
 
                 <h2>Informations de réservation</h2>
 
                 <div class="form-group">
-
-                    <label for="salle_id">
-                        Salle
-                    </label>
-
-                    <select
-                        id="salle_id"
-                        name="salle_id"
-                        required
-                    >
-
-                        <option value="">
-                            Sélectionnez une salle
-                        </option>
+                    <label for="salle_id">Salle</label>
+                    <select id="salle_id" name="salle_id" required>
+                        <option value="">Sélectionnez une salle</option>
 
                         <?php foreach ($salles ?? [] as $salle): ?>
-
                             <option
-                                value="<?= $salle->id ?>"
+                                value="<?= (int) $salle->id ?>"
                                 <?= (
                                     isset($salleSelectionnee)
                                     && $salleSelectionnee->id === $salle->id
-                                )
-                                    ? 'selected'
-                                    : ''
-                                ?>
+                                ) ? 'selected' : '' ?>
                             >
-                                <?= htmlspecialchars(
-                                    $salle->nom,
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars($salle->nom, ENT_QUOTES, 'UTF-8') ?>
                                 —
-                                <?= $salle->capacite ?> personnes
+                                <?= (int) $salle->capacite ?> personnes
                             </option>
-
                         <?php endforeach; ?>
-
                     </select>
-
                 </div>
 
-
                 <div class="form-group">
-
-                    <label for="motif">
-                        Motif de la réservation
-                    </label>
-
+                    <label for="motif">Motif de la réservation</label>
                     <textarea
                         id="motif"
                         name="motif"
                         rows="4"
+                        minlength="5"
+                        maxlength="255"
                         placeholder="Exemple : cours, réunion, soutenance..."
                         required
                     ></textarea>
-
                 </div>
 
-
                 <div class="form-grid">
-
                     <div class="form-group">
-
-                        <label for="date_debut">
-                            Date et heure de début
-                        </label>
-
+                        <label for="date_debut">Date et heure de début</label>
                         <input
                             type="datetime-local"
                             id="date_debut"
                             name="date_debut"
                             required
                         >
-
                     </div>
 
-
                     <div class="form-group">
-
-                        <label for="date_fin">
-                            Date et heure de fin
-                        </label>
-
+                        <label for="date_fin">Date et heure de fin</label>
                         <input
                             type="datetime-local"
                             id="date_fin"
                             name="date_fin"
                             required
                         >
-
                     </div>
-
                 </div>
 
             </div>
 
-
             <div class="form-actions">
+                <a href="/" class="btn btn-secondary">Annuler</a>
 
-                <a href="/" class="btn btn-secondary">
-                    Annuler
-                </a>
-
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
+                <button type="submit" class="btn btn-primary">
                     Confirmer la réservation
                 </button>
-
             </div>
 
         </form>
