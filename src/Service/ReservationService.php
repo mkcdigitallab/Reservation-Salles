@@ -62,7 +62,6 @@ final class ReservationService
             'motif' => $dto->motif,
             'date_debut' => $dto->dateDebut,
             'date_fin' => $dto->dateFin,
-            'statut' => 'confirmée',
         ]);
     }
 }
