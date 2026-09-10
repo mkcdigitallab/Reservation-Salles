@@ -15,13 +15,14 @@ Application web de réservation de salles, développée en PHP avec une architec
 - Injection de dépendances avec PHP-DI
 - Accès aux données avec Eloquent
 - Configuration par variables d'environnement
+- Protection CSRF et en-têtes HTTP de sécurité
 - Tests unitaires avec PHPUnit
 
 ## Architecture
 
 ```text
 config/          Configuration de l'application et du conteneur
- database/       Migrations SQL et données initiales
+database/        Migrations SQL et données initiales
 public/          Point d'entrée HTTP et assets
 routes/          Définition des routes
 src/Controller/  Contrôleurs HTTP
@@ -30,6 +31,7 @@ src/Model/       Modèles Eloquent
 src/Repository/  Accès aux données
 src/Service/     Règles métier
 src/Validation/  Validation des données
+src/Security/    Protection CSRF
 templates/       Vues PHP
 tests/           Tests automatisés
 ```
@@ -38,14 +40,15 @@ tests/           Tests automatisés
 
 - PHP 8.2 ou supérieur
 - Composer
-- MySQL ou MariaDB
+- Docker et Docker Compose pour l'environnement conteneurisé
+- MySQL ou MariaDB pour une installation locale
 
-## Installation
+## Installation locale
 
 ```bash
 git clone https://github.com/mkcdigitallab/Reservation-Salles.git
 cd Reservation-Salles
-composer update
+composer install
 cp .env.example .env
 ```
 
@@ -59,7 +62,47 @@ Initialisez les salles avec :
 php database/seed.php
 ```
 
-## Lancer l'application
+## Environnement Docker de développement
+
+L'environnement de développement utilise `docker-compose.yml` et peut être construit localement :
+
+```bash
+docker compose up -d --build
+docker compose ps
+```
+
+L'application est ensuite disponible sur `http://localhost:8000`.
+
+## Environnement Docker de production
+
+Les valeurs sensibles ne sont pas écrites dans `docker-compose.prod.yml` et ne doivent pas être commit dans Git. Le dépôt fournit uniquement un modèle : `.env.prod.example`.
+
+Créer localement un fichier ignoré par Git :
+
+```bash
+cp .env.prod.example .env.prod.local
+```
+
+Puis remplacer les valeurs `CHANGE_ME...` par de vrais mots de passe.
+
+Lancer la production avec cet environnement :
+
+```bash
+docker compose --env-file .env.prod.local -f docker-compose.prod.yml up -d
+```
+
+Vérifier les conteneurs :
+
+```bash
+docker compose --env-file .env.prod.local -f docker-compose.prod.yml ps
+docker compose --env-file .env.prod.local -f docker-compose.prod.yml logs
+```
+
+> `.env.prod.local` est couvert par la règle `.env.*.local` du `.gitignore`. Les secrets restent donc hors du dépôt.
+
+L'image applicative et l'image MySQL de production sont séparées dans `docker-compose.prod.yml`. L'application utilise une image PHP non privilégiée et la base de données utilise sa propre image.
+
+## Lancer l'application sans Docker
 
 ```bash
 php -S localhost:8000 -t public
@@ -70,7 +113,17 @@ Puis ouvrez `http://localhost:8000` dans votre navigateur.
 ## Tests
 
 ```bash
+composer install
 vendor/bin/phpunit
+```
+
+## Scripts de maintenance
+
+```bash
+./scripts/malang-kiya-ciss.sh test
+./scripts/malang-kiya-ciss.sh lint
+./scripts/malang-kiya-ciss.sh security
+./scripts/malang-kiya-ciss.sh audit
 ```
 
 ## Règles métier principales
