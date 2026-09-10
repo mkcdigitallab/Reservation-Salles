@@ -75,30 +75,26 @@ L'application est ensuite disponible sur `http://localhost:8000`.
 
 ## Environnement Docker de production
 
-Les valeurs sensibles ne sont pas écrites dans `docker-compose.prod.yml` et ne doivent pas être commit dans Git. Le dépôt fournit uniquement un modèle : `.env.prod.example`.
+Les valeurs sensibles ne sont pas écrites dans `docker-compose.prod.yml`. Le dépôt fournit uniquement `.env.prod.example` comme modèle de variables, sans secret réel.
 
-Créer localement un fichier ignoré par Git :
+**Aucun fichier `.env.prod` contenant des secrets ne doit être créé ou conservé dans le dépôt.** Pour le déploiement, les valeurs suivantes doivent être fournies par l'environnement de déploiement :
 
-```bash
-cp .env.prod.example .env.prod.local
-```
+- `DB_DATABASE`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `MYSQL_ROOT_PASSWORD`
 
-Puis remplacer les valeurs `CHANGE_ME...` par de vrais mots de passe.
+Pour le déploiement avec GitHub Actions, ces valeurs seront stockées dans l'environnement GitHub `production` et injectées dans le workflow au moment du déploiement. Elles ne sont donc pas nécessaires sur le poste de développement.
 
-Lancer la production avec cet environnement :
-
-```bash
-docker compose --env-file .env.prod.local -f docker-compose.prod.yml up -d
-```
-
-Vérifier les conteneurs :
+Le fichier de production peut ensuite être lancé par le mécanisme de déploiement avec les variables d'environnement fournies par celui-ci :
 
 ```bash
-docker compose --env-file .env.prod.local -f docker-compose.prod.yml ps
-docker compose --env-file .env.prod.local -f docker-compose.prod.yml logs
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs
 ```
 
-> `.env.prod.local` est couvert par la règle `.env.*.local` du `.gitignore`. Les secrets restent donc hors du dépôt.
+Le serveur de production doit recevoir les variables d'environnement via son mécanisme de secrets/configuration. Ne pas remplacer cette étape par un commit de mots de passe dans Git.
 
 L'image applicative et l'image MySQL de production sont séparées dans `docker-compose.prod.yml`. L'application utilise une image PHP non privilégiée et la base de données utilise sa propre image.
 
@@ -135,6 +131,20 @@ vendor/bin/phpunit
 - Deux réservations confirmées ne peuvent pas se chevaucher.
 - Deux réservations adjacentes sont autorisées : 10h–12h puis 12h–14h.
 - Une réservation annulée ne bloque pas la salle.
+
+## Déploiement
+
+Le déploiement fait partie de la finalisation du projet. Avant la release `1.0.0`, il faudra :
+
+1. Valider les tests PHPUnit et la CI.
+2. Construire et publier les images Docker de production.
+3. Configurer l'environnement GitHub `production` avec les secrets nécessaires.
+4. Déployer les images sur le serveur cible avec `docker-compose.prod.yml`.
+5. Vérifier l'application et la base de données sur l'environnement déployé.
+6. Effectuer ensuite la Pull Request finale vers `main`.
+7. Créer le tag et la release `v1.0.0`.
+
+Le serveur cible et son mécanisme d'accès seront configurés au moment de la phase de déploiement ; aucun secret de production n'est requis sur le poste local.
 
 ## Version
 
