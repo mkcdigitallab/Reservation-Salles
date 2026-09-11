@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\ReservationDTO;
-use App\Repository\SalleRepository;
+use App\Repository\SalleRepositoryInterface;
 use App\Security\CsrfToken;
 use App\Service\ReservationService;
 use DateMalformedStringException;
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 final class ReservationController
 {
     public function __construct(
-        private SalleRepository $salleRepository,
+        private SalleRepositoryInterface $salleRepository,
         private ReservationService $reservationService,
         private CsrfToken $csrfToken,
     ) {
