@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\SalleRepository;
+use App\Repository\SalleRepositoryInterface;
 
 final class SalleController
 {
     public function __construct(
-        private SalleRepository $salleRepository
+        private SalleRepositoryInterface $salleRepository
     ) {
     }
 

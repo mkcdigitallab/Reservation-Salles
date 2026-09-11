@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Check PHP syntax
+        run: |
+          find config public routes src tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Run PHPUnit
+        run: ./vendor/bin/phpunit
+
+      - name: Audit dependencies
+        run: composer audit --no-interaction
+
+      - name: Validate development Compose
+        run: docker compose config -q
+
+      - name: Validate production Compose
+        run: |
+          DB_DATABASE=reservation_salles \
+          DB_USERNAME=reservation_user \
+          DB_PASSWORD=ci_password \
+          MYSQL_ROOT_PASSWORD=ci_root_password \
+          docker compose -f docker-compose.prod.yml config -q
+
+      - name: Build application image
+        run: docker build --pull -t reservation-salles:ci .
+
+      - name: Smoke test development Compose
+        run: |
+          docker compose up -d --build --wait
+          curl --fail --silent --show-error http://localhost:8000/ > /dev/null
+          docker compose exec -T db mysql \
+            -ureservation_user \
+            -preservation_password \
+            reservation_salles \
+            -e "SELECT COUNT(*) FROM salles;"
+
+      - name: Cleanup Docker Compose
+        if: ${{ always() }}
+        run: docker compose down -v --remove-orphans

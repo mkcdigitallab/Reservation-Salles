@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Model\Salle;
 use Illuminate\Database\Eloquent\Collection;
 
-final class SalleRepository
+final class SalleRepository implements SalleRepositoryInterface
 {
     /**
      * @return Collection<int, Salle>

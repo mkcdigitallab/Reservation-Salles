@@ -1,3 +1,11 @@
-vendor/
+/vendor/
 .env
+.env.local
+.env.*.local
+.env.prod
+!.env.example
+!.env.prod.example
 *.log
+.phpunit.result.cache
+coverage/
+.DS_Store

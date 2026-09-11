@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Validation;
 
-use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
 
-class ReservationValidator
+final class ReservationValidator
 {
     public function validate(
         string $responsable,
@@ -17,25 +16,34 @@ class ReservationValidator
         DateTimeInterface $dateDebut,
         DateTimeInterface $dateFin
     ): void {
-        if (trim($responsable) === '') {
+        $responsable = trim($responsable);
+        $motif = trim($motif);
+
+        if ($responsable === '') {
             throw new InvalidArgumentException(
                 'Le responsable est obligatoire.'
             );
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (mb_strlen($responsable) > 100) {
+            throw new InvalidArgumentException(
+                'Le responsable ne peut pas dépasser 100 caractères.'
+            );
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 255) {
             throw new InvalidArgumentException(
                 'L’adresse email est invalide.'
             );
         }
 
-        if (trim($motif) === '') {
+        if (mb_strlen($motif) < 5 || mb_strlen($motif) > 255) {
             throw new InvalidArgumentException(
-                'Le motif est obligatoire.'
+                'Le motif doit contenir entre 5 et 255 caractères.'
             );
         }
 
-        $maintenant = new DateTimeImmutable();
+        $maintenant = new \DateTimeImmutable();
 
         if ($dateDebut <= $maintenant) {
             throw new InvalidArgumentException(
@@ -50,6 +58,12 @@ class ReservationValidator
         }
 
         $duree = $dateFin->getTimestamp() - $dateDebut->getTimestamp();
+
+        if ($duree < 30 * 60) {
+            throw new InvalidArgumentException(
+                'Une réservation doit durer au moins 30 minutes.'
+            );
+        }
 
         if ($duree > 4 * 60 * 60) {
             throw new InvalidArgumentException(

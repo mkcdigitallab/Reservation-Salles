@@ -7,11 +7,24 @@ namespace App\Repository;
 use App\Model\Reservation;
 use DateTimeInterface;
 
-final class ReservationRepository
+final class ReservationRepository implements ReservationRepositoryInterface
 {
     public function create(array $data): Reservation
     {
         return Reservation::query()->create($data);
+    }
+
+    public function findById(int $id): ?Reservation
+    {
+        return Reservation::query()->find($id);
+    }
+
+    public function cancel(Reservation $reservation): Reservation
+    {
+        $reservation->statut = 'annulée';
+        $reservation->save();
+
+        return $reservation;
     }
 
     public function hasConflict(
