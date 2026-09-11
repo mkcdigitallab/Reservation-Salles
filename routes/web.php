@@ -23,4 +23,10 @@ return static function (RouteCollector $router): void {
         '/reservations',
         ['App\Controller\ReservationController', 'store']
     );
+
+    $router->addRoute(
+        'POST',
+        '/reservations/{id:\\d+}/annuler',
+        ['App\Controller\ReservationController', 'cancel']
+    );
 };
