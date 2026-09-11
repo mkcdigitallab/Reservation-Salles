@@ -39,6 +39,11 @@ Variables facultatives:
 EOF
 }
 
+if [ "$#" -eq 0 ]; then
+    usage
+    exit 0
+fi
+
 require_db() {
     if ! docker ps --format '{{.Names}}' | grep -Fxq "$CONTAINER"; then
         echo "❌ Le conteneur ${CONTAINER} n'est pas démarré."
