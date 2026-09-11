@@ -43,3 +43,17 @@ jobs:
 
       - name: Audit dependencies
         run: composer audit --no-interaction
+
+      - name: Validate development Compose
+        run: docker compose config -q
+
+      - name: Validate production Compose
+        run: |
+          DB_DATABASE=reservation_salles \
+          DB_USERNAME=reservation_user \
+          DB_PASSWORD=ci_password \
+          MYSQL_ROOT_PASSWORD=ci_root_password \
+          docker compose -f docker-compose.prod.yml config -q
+
+      - name: Build application image
+        run: docker build --pull -t reservation-salles:ci .
