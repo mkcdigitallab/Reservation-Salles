@@ -10,7 +10,6 @@ use App\Model\Salle;
 use App\Repository\ReservationRepositoryInterface;
 use App\Repository\SalleRepositoryInterface;
 use App\Service\ReservationService;
-use App\Validation\ReservationValidator;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +58,7 @@ final class ReservationServiceTest extends TestCase
         $this->service($salleRepository, $reservationRepository)->createReservation($this->dto());
     }
 
-    public function testUneReservationSansConflitEstCreeeAvecLesDonneesAttenduess(): void
+    public function testUneReservationSansConflitEstCreeeAvecLesDonneesAttendues(): void
     {
         $salleRepository = $this->createStub(SalleRepositoryInterface::class);
         $reservationRepository = $this->createMock(ReservationRepositoryInterface::class);
