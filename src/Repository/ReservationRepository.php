@@ -14,6 +14,19 @@ final class ReservationRepository implements ReservationRepositoryInterface
         return Reservation::query()->create($data);
     }
 
+    public function findById(int $id): ?Reservation
+    {
+        return Reservation::query()->find($id);
+    }
+
+    public function cancel(Reservation $reservation): Reservation
+    {
+        $reservation->statut = 'annulée';
+        $reservation->save();
+
+        return $reservation;
+    }
+
     public function hasConflict(
         int $salleId,
         DateTimeInterface $dateDebut,
