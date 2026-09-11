@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 INSERT INTO salles (nom, batiment, capacite, type, active) VALUES
     ('Salle A101', 'Bâtiment A', 30, 'cours', TRUE),
     ('Salle Informatique 1', 'Bâtiment B', 25, 'informatique', TRUE),
