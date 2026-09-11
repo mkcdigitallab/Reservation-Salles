@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\DTO\ReservationDTO;
 use App\Repository\SalleRepositoryInterface;
 use App\Security\CsrfToken;
+use App\Service\AnnulerReservationService;
 use App\Service\ReservationService;
 use DateMalformedStringException;
 use DateTimeImmutable;
@@ -17,6 +18,7 @@ final class ReservationController
     public function __construct(
         private SalleRepositoryInterface $salleRepository,
         private ReservationService $reservationService,
+        private AnnulerReservationService $annulerReservationService,
         private CsrfToken $csrfToken,
     ) {
     }
@@ -74,6 +76,37 @@ final class ReservationController
             header('Location: /');
             exit;
         } catch (InvalidArgumentException | DateMalformedStringException $exception) {
+            http_response_code(422);
+            $message = $exception->getMessage();
+            require dirname(dirname(__DIR__)) . '/templates/error/422.php';
+        }
+    }
+
+    public function cancel(string $id): void
+    {
+        try {
+            $token = isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+                ? $_POST['csrf_token']
+                : null;
+
+            if (!$this->csrfToken->validate($token)) {
+                http_response_code(419);
+                $message = 'Le formulaire a expiré ou le token de sécurité est invalide.';
+                require dirname(dirname(__DIR__)) . '/templates/error/422.php';
+                return;
+            }
+
+            $reservationId = filter_var($id, FILTER_VALIDATE_INT);
+
+            if ($reservationId === false) {
+                throw new InvalidArgumentException('La réservation demandée est invalide.');
+            }
+
+            $this->annulerReservationService->cancel($reservationId);
+
+            header('Location: /');
+            exit;
+        } catch (InvalidArgumentException $exception) {
             http_response_code(422);
             $message = $exception->getMessage();
             require dirname(dirname(__DIR__)) . '/templates/error/422.php';
