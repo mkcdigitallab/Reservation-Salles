@@ -2,6 +2,7 @@
     "name": "malang-kiya-cisse/reservation-salles",
     "description": "Application de réservation de salles",
     "type": "project",
+    "license": "MIT",
     "authors": [
         {
             "name": "Malang Kiya Cisse",
