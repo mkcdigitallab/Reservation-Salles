@@ -8,5 +8,6 @@ if (filter_var(getenv('RUN_SEED') ?: 'true', FILTER_VALIDATE_BOOL)) {
     require __DIR__ . '/seed.php';
 }
 
-passthru('exec php -S 0.0.0.0:8000 -t public', $exitCode);
+$port = (int) (getenv('PORT') ?: 8000);
+passthru("exec php -S 0.0.0.0:{$port} -t public", $exitCode);
 exit($exitCode);
