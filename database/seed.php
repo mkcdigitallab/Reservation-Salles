@@ -7,10 +7,13 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Model\Salle;
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+$root = dirname(__DIR__);
 
-$database = require __DIR__ . '/../config/database.php';
+if (is_file($root . '/.env')) {
+    Dotenv::createImmutable($root)->safeLoad();
+}
+
+$database = require $root . '/config/database.php';
 $database();
 
 $salles = [
