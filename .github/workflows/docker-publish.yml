@@ -32,7 +32,7 @@ jobs:
           context: .
           push: true
           tags: |
-            mkdigitlab/reservation-salles:1.1
-            mkdigitlab/reservation-salles:latest
+            mkcdigitallab/reservation-salles:latest
+            mkcdigitallab/reservation-salles:1.1
           cache-from: type=gha
           cache-to: type=gha,mode=max
